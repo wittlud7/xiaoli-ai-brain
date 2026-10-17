@@ -1,0 +1,30 @@
+{
+  "name": "xiaoli-ai-brain",
+  "version": "0.1.0-alpha.1",
+  "private": true,
+  "description": "Local-first AI study workspace with sources, briefs and dual-host podcasts.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "node --watch server.mjs",
+    "start": "node server.mjs",
+    "lint": "node scripts/check.mjs",
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "check:secrets": "node scripts/secrets.mjs",
+    "check": "npm run lint && npm run check:secrets && npm test && npm run build"
+  },
+  "overrides": {
+    "qs": "^6.16.1"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@google/genai": "^1.29.0",
+    "dotenv": "^17.2.3",
+    "express": "^4.21.2",
+    "pdfjs-dist": "^5.5.207"
+  }
+}

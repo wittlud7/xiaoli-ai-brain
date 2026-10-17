@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+output/
+.playwright-cli/
+*.pem
+*.key
+*.p12
+*.sqlite*
+*backup*.json
