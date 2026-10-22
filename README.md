@@ -1,5 +1,7 @@
 # 小理 · AI 学习工作台
 
+网页版：[打开学习工作台](https://xiaoli-ai-brain-wittlud7.youngcoin22.chatgpt.site)（站点所有者登录后使用）。支持资料导入和 Gemini 学习工具，线上语音合成暂未启用；数据保存在当前浏览器。部署与更新见 [hosting/README.md](hosting/README.md)。
+
 把“资料 → 理解 → 复习”连起来的中文个人学习工具。本地保存资料、记录和音频；生成时才把选定内容发送给你配置的模型。
 
 **v0.2.0-beta.1 · MIT 开源 · 适合个人或少量受信任用户。**
