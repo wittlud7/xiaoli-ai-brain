@@ -75,6 +75,8 @@ const labels = {
   podcast: "双人播客",
 };
 async function generate(page, kind) {
+  // Hash navigation is asynchronous; count records only after the studio mounts.
+  await page.locator(".studio").waitFor();
   const count = await page.locator(".history-row").count();
   await page.locator(`.tool[data-id="${kind}"]`).click();
   await page
