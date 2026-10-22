@@ -1,6 +1,6 @@
 {
   "name": "xiaoli-ai-brain",
-  "version": "0.1.0-alpha.1",
+  "version": "0.2.0-beta.1",
   "private": true,
   "description": "Local-first AI study workspace with sources, briefs and dual-host podcasts.",
   "license": "MIT",
@@ -13,9 +13,11 @@
     "start": "node server.mjs",
     "lint": "node scripts/check.mjs",
     "test": "node --test",
+    "test:browser": "node --test e2e/workspace.mjs",
+    "format:check": "prettier --check web lib server.mjs test e2e fixtures scripts package.json .github/workflows/ci.yml",
     "build": "node scripts/build.mjs",
     "check:secrets": "node scripts/secrets.mjs",
-    "check": "npm run lint && npm run check:secrets && npm test && npm run build"
+    "check": "npm run format:check && npm run lint && npm run check:secrets && npm test && npm run build"
   },
   "overrides": {
     "qs": "^6.16.1"
@@ -26,5 +28,10 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "pdfjs-dist": "^5.5.207"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.6",
+    "playwright": "^1.64.1",
+    "prettier": "^3.9.10"
   }
 }

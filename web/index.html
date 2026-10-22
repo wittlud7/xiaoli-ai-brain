@@ -1,15 +1,48 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>XiaoLi AI Brain</title>
+    <title>小理 · AI 学习工作台</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="description" content="小理 AI 大脑：本地优先的学习资料、复习摘要与双主持人播客工作台。" />
+    <meta
+      name="description"
+      content="小理 AI 大脑：本地优先的学习资料、复习摘要与双主持人播客工作台。"
+    />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <main class="boot-error">
+        <h1>小理 · AI 学习工作台</h1>
+        <p>正在打开本地工作区…</p>
+      </main>
+    </div>
+    <dialog id="editor" aria-label="工作区操作窗口"></dialog>
+    <input
+      id="file-import"
+      type="file"
+      accept=".pdf,.txt,.md"
+      multiple
+      hidden
+    />
+    <input id="backup-import" type="file" accept=".json" hidden />
+    <aside
+      id="audio-player"
+      class="audio-player"
+      aria-label="播客播放器"
+      hidden
+    >
+      <div>
+        <strong data-player-title>学习播客</strong
+        ><small>AI 合成语音 · 本地音频</small>
+      </div>
+      <audio controls preload="metadata" aria-label="学习播客音频"></audio>
+      <a class="button secondary" download="小理学习播客.mp3">下载</a>
+      <button class="icon-button" data-close-player aria-label="关闭播放器">
+        ×
+      </button>
+    </aside>
     <script type="module" src="/app.js"></script>
   </body>
 </html>

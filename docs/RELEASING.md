@@ -8,7 +8,7 @@
 4. 先 `git add .`，再用 `git diff --cached --stat`、`git diff --cached --check` 和 `git diff --cached` 检查真实提交内容。若发现凭证，移出暂存区并撤销已经暴露的密钥。
 5. 在 GitHub 创建空仓库，添加远程地址，提交并推送。不要在公开 Issue 中粘贴 `.env` 或私人资料。
 6. 在仓库 Settings 中启用可用的安全告警与私下漏洞报告，并确认 Actions 成功。
-7. 创建 `v0.1.0-alpha.1` 标签和预发布 Release，说明 Alpha 限制与验证范围。可将 `dist/` 内容打成压缩包作为附件，务必排除本机 `.env` 和安装后的 `node_modules/`。
+7. 创建 `v0.2.0-beta.1` 标签和预发布 Release，说明 Beta 限制与验证范围。可将 `dist/` 内容打成压缩包作为附件，务必排除本机 `.env` 和安装后的 `node_modules/`。
 
 首次推送示例（将 `YOUR_NAME` 替换为实际 GitHub 用户名）：
 
@@ -16,12 +16,14 @@
 git add .
 git diff --cached --check
 git diff --cached --stat
-git commit -m "Prepare v0.1.0-alpha.1 open-source release"
+git commit -m "Release v0.2.0-beta.1 study workspace"
 git branch -M main
 git remote add origin https://github.com/YOUR_NAME/xiaoli-ai-brain.git
 git push -u origin main
 ```
 
 已有远程仓库时先执行 `git remote -v` 确认地址，不要盲目覆盖。这里不提供强制推送命令。
+
+更新现有仓库时，在验证通过后提交当前分支，确认远程 main 是当前提交的祖先，再使用 `git push origin HEAD:main`。执行 `npx playwright install chromium`、`npm run test:browser`，并验证发布包的独立安装与启动。标签应指向检查通过的精确提交，不覆盖已有标签。
 
 开发验证与真实供应商验证应分别记录。替代供应商测试通过，不表示真实账号、模型权限、余额或音频质量已经验证。若尚未进行真实调用，请在 Release 中写明。

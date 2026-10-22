@@ -1,12 +1,12 @@
 # 参与贡献
 
-欢迎提交可复现的 Bug、明确的改进建议和小范围 PR。项目当前为 Alpha，维护入口是 `server.mjs`、`lib/` 与 `web/`。`legacy/` 为未维护的历史参考。
+欢迎提交可复现的 Bug、明确的改进建议和小范围 PR。项目当前为 Beta，维护入口是 `server.mjs`、`lib/` 与 `web/`。`legacy/` 为未维护的历史参考。
 
 1. 使用 Node.js 22.13+，执行 `npm ci`。
 2. 从 `.env.example` 创建本机 `.env`；不要提交密钥、真实学习资料、工作区备份或日志。
 3. 运行 `npm start`，按 README 的流程复现问题。
 4. 修改代码；安全边界、存储和 API 行为变更请补充回归测试。
-5. 提交前执行 `npm run check`，并手动验证受影响的页面。
+5. 提交前执行 `npm run check`；首次执行 `npx playwright install chromium`，再运行 `npm run test:browser` 并验证受影响的页面。
 
 测试使用 Node 内置 runner 与替代供应商，普通检查不需要 API 密钥。修改真实供应商请求时，请说明是否做过真实验证、所用模型和未验证的限制，不要在 PR 中粘贴私人提示词或服务返回的敏感内容。
 
