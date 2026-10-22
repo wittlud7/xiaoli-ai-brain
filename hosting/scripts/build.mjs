@@ -38,6 +38,13 @@ async function addTree(path, prefix) {
   }
 }
 await addTree(resolve(root, "web"), "");
+// Mark the hosted build so even an expired platform session shows sign-in,
+// rather than the local server's shared access-key dialog.
+assets["/index.html"][1] = Buffer.from(
+  Buffer.from(assets["/index.html"][1], "base64")
+    .toString("utf8")
+    .replace('<html lang="zh-CN">', '<html lang="zh-CN" data-hosting="sites">'),
+).toString("base64");
 for (const name of ["build", "cmaps", "standard_fonts"])
   await addTree(
     resolve(root, "node_modules/pdfjs-dist", name),

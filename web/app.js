@@ -36,6 +36,8 @@ const ui = {
   conceptId: "",
   capabilities: null,
   locked: false,
+  hosted: document.documentElement.dataset.hosting === "sites",
+  connectionError: "",
 };
 let storage,
   repo,
@@ -407,9 +409,15 @@ async function refreshConfig() {
   try {
     ui.capabilities = await request("/api/config");
     ui.locked = false;
+    ui.connectionError = "";
   } catch (error) {
-    if (error.status === 401) ui.locked = true;
-    else ui.notice = "无法连接本地服务，请检查启动终端。资料仍在本地保存。";
+    if (error.status === 401) {
+      ui.locked = true;
+      ui.connectionError = "";
+    } else
+      ui.connectionError = ui.hosted
+        ? "暂时无法连接在线服务。你仍可整理资料和导出备份，请稍后重新检查连接。"
+        : "无法连接本地服务，请检查启动终端。资料仍在本地保存。";
     ui.capabilities = { textReady: false, audioReady: false };
   }
   render();
@@ -478,6 +486,10 @@ async function handleAction(element) {
   if (name === "dismiss") {
     ui.notice = "";
     return render();
+  }
+  if (name === "unlock" && ui.hosted) {
+    location.assign("/signin-with-chatgpt?return_to=%2F");
+    return;
   }
   if (name === "unlock")
     return openDialog(

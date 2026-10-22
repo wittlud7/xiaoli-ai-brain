@@ -14,7 +14,10 @@
     "lint": "node scripts/check.mjs",
     "test": "node --test",
     "test:browser": "node --test e2e/workspace.mjs",
-    "format:check": "prettier --check web lib server.mjs test e2e fixtures scripts package.json .github/workflows/ci.yml",
+    "test:browser:site": "node --test e2e/hosted.mjs",
+    "build:site": "node hosting/scripts/build.mjs",
+    "test:site": "node hosting/scripts/validate.mjs",
+    "format:check": "prettier --check web lib server.mjs test e2e fixtures scripts hosting package.json .github/workflows/ci.yml",
     "build": "node scripts/build.mjs",
     "check:secrets": "node scripts/secrets.mjs",
     "check": "npm run format:check && npm run lint && npm run check:secrets && npm test && npm run build"

@@ -10,9 +10,11 @@ for (const directory of [
   "test",
   "fixtures",
   "e2e",
+  "hosting/worker",
+  "hosting/scripts",
 ]) {
   for (const file of readdirSync(directory)) {
-    if (!/\.(mjs|js)$/.test(file)) continue;
+    if (!/\.(mjs|js|cjs)$/.test(file)) continue;
     const result = spawnSync(
       process.execPath,
       ["--check", join(directory, file)],

@@ -2,12 +2,13 @@
 // deployment with anonymous access while it uses the owner's provider key.
 const buckets = new Map();
 let active = 0;
-const json = (body, status = 200) =>
+const json = (body, status = 200, headers = {}) =>
   new Response(JSON.stringify(body), {
     status,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store",
+      ...headers,
     },
   });
 export default {
@@ -31,10 +32,14 @@ export default {
         },
       });
     }
-    // The platform strips visitor-supplied identity headers. Fail closed even
-    // if a future owner changes the Site audience to public.
+    // Sites strips visitor-supplied identity headers. The private Site access
+    // policy authorizes the owner; this additional check rejects no-identity calls.
     const user = request.headers.get("oai-authenticated-user-id");
-    if (!user) return json({ error: "请登录后使用学习工作台。" }, 401);
+    if (!user)
+      return json(
+        { error: "请登录后使用学习工作台。", code: "LOGIN_REQUIRED" },
+        401,
+      );
     if (
       request.headers.get("sec-fetch-site") === "cross-site" ||
       (request.headers.get("origin") &&
@@ -44,6 +49,7 @@ export default {
     if (url.pathname === "/api/config" && request.method === "GET")
       return json({
         version: "0.2.0-beta.1",
+        hosting: "sites",
         textReady: Boolean(env.GEMINI_API_KEY),
         audioReady: false,
       });
@@ -57,7 +63,11 @@ export default {
     const bucket = buckets.get(user) || { count: 0, until: now + 60000 };
     buckets.set(user, bucket);
     if (++bucket.count > 20 || active >= 2)
-      return json({ error: "请求较多，请稍后重试。" }, 429);
+      return json({ error: "请求较多，请稍后重试。" }, 429, {
+        "Retry-After": String(
+          Math.max(1, Math.ceil((bucket.until - now) / 1000)),
+        ),
+      });
     if (!env.GEMINI_API_KEY)
       return json({ error: "服务端尚未配置 Gemini。" }, 503);
     active++;
@@ -119,7 +129,10 @@ export default {
             }),
           },
         );
-        if (!response.ok) throw new Error("Provider request failed");
+        if (!response.ok)
+          throw Object.assign(new Error("Provider request failed"), {
+            providerStatus: response.status,
+          });
         const result = await response.json();
         return (
           result.candidates?.[0]?.content?.parts
@@ -137,10 +150,17 @@ export default {
         return json({ error: error.message }, 400);
       if (error.name === "TimeoutError" || error.name === "AbortError")
         return json({ error: "请求超时，请稍后重试。" }, 504);
+      const code = [401, 403].includes(error.providerStatus)
+        ? "PROVIDER_AUTH"
+        : error.providerStatus === 404
+          ? "PROVIDER_NOT_FOUND"
+          : error.providerStatus === 429
+            ? "PROVIDER_LIMIT"
+            : "PROVIDER_FAILURE";
       return json(
         {
           error: "AI 请求失败，请检查服务配置或稍后重试。",
-          code: "PROVIDER_FAILURE",
+          code,
         },
         502,
       );

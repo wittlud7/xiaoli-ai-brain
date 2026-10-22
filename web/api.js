@@ -1,7 +1,8 @@
 export class ApiError extends Error {
-  constructor(message, status) {
+  constructor(message, status, code) {
     super(message);
     this.status = status;
+    this.code = code;
   }
 }
 let token = "";
@@ -10,6 +11,9 @@ export function setAccessToken(value) {
 }
 
 export async function request(path, body, { signal } = {}) {
+  const hosted =
+    globalThis.document?.documentElement?.dataset.hosting === "sites";
+  const timeoutMs = path === "/api/config" ? 10000 : 140000;
   const response = await fetch(path, {
     method: body === undefined ? "GET" : "POST",
     headers: {
@@ -18,20 +22,32 @@ export async function request(path, body, { signal } = {}) {
     },
     body: body === undefined ? undefined : JSON.stringify(body),
     signal: signal
-      ? AbortSignal.any([signal, AbortSignal.timeout(140000)])
-      : AbortSignal.timeout(140000),
+      ? AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)])
+      : AbortSignal.timeout(timeoutMs),
     cache: "no-store",
   });
   let result;
   try {
     result = await response.json();
   } catch {
+    if (response.status === 401 && hosted)
+      throw new ApiError(
+        "登录已过期，请重新使用 ChatGPT 登录。资料仍保存在此浏览器。",
+        401,
+        "LOGIN_REQUIRED",
+      );
     throw new ApiError(
       "服务返回了无法读取的响应，请检查服务是否正常运行。",
       response.status,
     );
   }
   if (!response.ok) {
+    if (response.status === 401 && (result.code === "LOGIN_REQUIRED" || hosted))
+      throw new ApiError(
+        "登录已过期，请重新使用 ChatGPT 登录。资料仍保存在此浏览器。",
+        401,
+        "LOGIN_REQUIRED",
+      );
     if (response.status === 502 && result.code === "PROVIDER_AUTH")
       throw new ApiError(
         path.includes("audio")
